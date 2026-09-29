@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Hari Menunggak Kredit</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            width: 100%;
+            max-width: 420px;
+        }
+        h2 {
+            color: #dc3545;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 24px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #495057;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #dc3545;
+            box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15);
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        button:hover {
+            background-color: #bd2130;
+        }
+        .result-box {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+            font-weight: bold;
+            display: none;
+        }
+        .status-aman {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status-tunggak {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .days-count {
+            font-size: 28px;
+            display: block;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Hitung Hari Menunggak</h2>
+    
+    <div class="form-group">
+        <label for="dueDate">Tanggal Menunggak Kredit:</label>
+        <input type="date" id="dueDate" required>
+    </div>
+    
+    <div class="form-group">
+        <label for="payDate">Tanggal Bayar / Tanggal Hari Ini:</label>
+        <input type="date" id="payDate">
+    </div>
+    
+    <button onclick="hitungTunggakan()">Cek Jumlah Hari</button>
+    
+    <div id="result" class="result-box"></div>
+</div>
+
+<script>
+    // Mengisi otomatis Tanggal Hari Ini pada input kedua saat halaman dimuat
+    document.getElementById('payDate').valueAsDate = new Date();
+
+    function hitungTunggakan() {
+        const dueDateInput = document.getElementById('dueDate').value;
+        const payDateInput = document.getElementById('payDate').value;
+        const resultDiv = document.getElementById('result');
+        
+        if (!dueDateInput || !payDateInput) {
+            alert('Harap isi kedua tanggal terlebih dahulu!');
+            return;
+        }
+        
+        const dueDate = new Date(dueDateInput);
+        const payDate = new Date(payDateInput);
+        
+        // Menghitung selisih waktu dalam milidetik
+        const timeDiff = payDate.getTime() - dueDate.getTime();
+        
+        // Mengonversi milidetik ke hitungan hari
+        const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+        
+        resultDiv.style.display = 'block';
+        
+        if (daysDiff > 0) {
+            // Jika melewati jatuh tempo
+            resultDiv.className = 'result-box status-tunggak';
+            resultDiv.innerHTML = `Terlambat / Menunggak:<br><span class="days-count">${daysDiff} Hari</span>Denda berjalan berlaku.`;
+        } else if (daysDiff === 0) {
+            // Jika tepat pada hari h jatuh tempo
+            resultDiv.className = 'result-box status-aman';
+            resultDiv.innerHTML = `Hari Ini Jatuh Tempo!<br><span class="days-count">0 Hari</span>Segera lakukan pembayaran.`;
+        } else {
+            // Jika belum jatuh tempo (pembayaran dipercepat)
+            resultDiv.className = 'result-box status-aman';
+            resultDiv.innerHTML = `Status Aman<br><span class="days-count">${Math.abs(daysDiff)} Hari</span>Sisa waktu sebelum jatuh tempo.`;
+        }
+    }
+</script>
+
+</body>
+</html>
